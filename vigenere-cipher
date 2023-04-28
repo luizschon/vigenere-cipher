@@ -18,7 +18,8 @@ CHAR_IDX = {x: y for y, x in enumerate(ALPHABET)}
 
 def vigenere_cipher(plaintext: str, secret: str) -> str:
     ciphertext = ""
-    for i, text_char in enumerate(plaintext.lower()):
+    i = 0
+    for text_char in plaintext.lower():
         if text_char not in ALPHABET:
             ciphertext += text_char
             continue
@@ -29,6 +30,7 @@ def vigenere_cipher(plaintext: str, secret: str) -> str:
 
         encoded_char = MATRIX[x][y]
         ciphertext += encoded_char
+        i += 1
 
     return ciphertext
 
