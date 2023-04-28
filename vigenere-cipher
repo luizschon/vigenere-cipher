@@ -9,17 +9,32 @@ Autores: Luiz Carlos Schonarth Junior
 Universidade de Brasilia
 """
 
-import sys, getopt
+import sys, getopt 
+from string import ascii_lowercase
 
-def vigenere_cipher(plaintext):
-    ciphertext = plaintext
-    print('CIPHERED MESSAGE:\n')
-    print(ciphertext)
+ALPHABET = ascii_lowercase
+MATRIX = [[ALPHABET[(i+j) % 26] for j in range(len(ALPHABET)) ] for i in range(len(ALPHABET))]
+CHAR_IDX = {x: y for y, x in enumerate(ALPHABET)}
 
-def vigenere_decipher(ciphertext):
-    plaintext = ciphertext
-    print('DECIPHERED MESSAGE:\n')
-    print(plaintext)
+def vigenere_cipher(plaintext: str, secret: str) -> str:
+    ciphertext = ""
+    for i, text_char in enumerate(plaintext.lower()):
+        if text_char not in ALPHABET:
+            ciphertext += text_char
+            continue
+
+        secret_idx = i % len(secret)
+        secret_char = secret[secret_idx]
+        x, y = CHAR_IDX[secret_char], CHAR_IDX[text_char]
+
+        encoded_char = MATRIX[x][y]
+        ciphertext += encoded_char
+
+    return ciphertext
+
+def vigenere_decipher(ciphertext: str, secret: str) -> str:
+    plaintext = ""
+    return plaintext
 
 def main():
     # Parse command line arguments
@@ -49,11 +64,14 @@ def main():
         sys.exit(1)
 
     text = sys.stdin.read()
+    print(text)
 
     if cipher:
-        vigenere_cipher(text)
+        res = vigenere_cipher(text, key)
+        print(res)
     else:
-        vigenere_decipher(text)
+        res = vigenere_decipher(text, key)
+        print(res)
 
 if __name__ == "__main__":
     main()
