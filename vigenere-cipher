@@ -16,44 +16,46 @@ ALPHABET = ascii_lowercase
 MATRIX = [[ALPHABET[(i+j) % 26] for j in range(len(ALPHABET)) ] for i in range(len(ALPHABET))]
 CHAR_IDX = {x: y for y, x in enumerate(ALPHABET)}
 
-def vigenere_cipher(plaintext: str, secret: str) -> str:
-    ciphertext = ""
+def vigenere_cipher(text: str, secret: str, should_encode: bool) -> str:
+    res = ""
     i = 0
-    for text_char in plaintext.lower():
+
+    for text_char in text.lower():
         if text_char not in ALPHABET:
-            ciphertext += text_char
+            res += text_char
             continue
 
         secret_idx = i % len(secret)
         secret_char = secret[secret_idx]
-        x, y = CHAR_IDX[secret_char], CHAR_IDX[text_char]
-
-        encoded_char = MATRIX[x][y]
-        ciphertext += encoded_char
         i += 1
 
-    return ciphertext
+        x, y = CHAR_IDX[secret_char], CHAR_IDX[text_char]
 
-def vigenere_decipher(ciphertext: str, secret: str) -> str:
-    plaintext = ""
-    return plaintext
+        if should_encode:
+            encoded_char = MATRIX[x][y]
+            res += encoded_char
+        else:
+            decoded_char = ALPHABET[MATRIX[x].index(text_char)]
+            res += decoded_char
+
+    return res
 
 def main():
     # Parse command line arguments
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "k:cd", ["key=", "cipher", "decipher"])
+        opts, args = getopt.getopt(sys.argv[1:], "k:ed", ["key=", "encode", "decode"])
     except getopt.GetoptError as err:
         print(err) 
         sys.exit(1)
     key = '';
-    cipher = True
+    should_encode = True
     for o, a in opts:
         if o in ('-k', '--key'):
             key = a
-        elif o in ('-c', '--cipher'):
-            cipher = True
-        elif o in ('-d', '--decipher'):
-            cipher = False
+        elif o in ('-e', '--encode'):
+            should_encode = True
+        elif o in ('-d', '--decode'):
+            should_encode = False
         else:
             print("ERROR: Unhadled option.", file=sys.stderr)
             sys.exit(1)
@@ -66,14 +68,7 @@ def main():
         sys.exit(1)
 
     text = sys.stdin.read()
-    print(text)
-
-    if cipher:
-        res = vigenere_cipher(text, key)
-        print(res)
-    else:
-        res = vigenere_decipher(text, key)
-        print(res)
+    print(vigenere_cipher(text, key, should_encode))
 
 if __name__ == "__main__":
     main()
