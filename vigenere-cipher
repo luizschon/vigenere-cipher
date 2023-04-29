@@ -68,7 +68,7 @@ def main():
         sys.exit(1)
 
     text = sys.stdin.read()
-    print(vigenere_cipher(text, key, should_encode))
+    sys.stdout.write(vigenere_cipher(text, key, should_encode))
 
 if __name__ == "__main__":
     main()
