@@ -1,0 +1,100 @@
+#! /usr/bin/env python3
+
+"""
+Trabalho 1 da disciplina Seguranca Computacional - CIC
+
+Autores: Luiz Carlos Schonarth Junior
+         Bruno Fernandes Teixeira
+
+Universidade de Brasilia
+"""
+
+import sys, getopt 
+from string import ascii_lowercase
+
+ALPHABET_SIZE = 26
+
+# Generate list of frequencies parsed from the frequency file
+def get_frequencies(filename: str) -> list:
+    lines = open(filename, 'r').readlines()
+    frequencies = []
+
+    for value in lines:
+        value = value.strip()
+        if not value.replace(".", "").isnumeric():
+            print(f"ERROR: Expected numerical value, got {value}.", file=sys.stderr)
+            sys.exit(1)
+
+        frequencies.append(float(value))
+
+    return frequencies
+
+# Compute list of character frequencies based on a string passed as parameter
+def compute_frequencies(string: str) -> list:
+    print(string)
+    string = string.lower()
+    frequencies = [0 for x in range(ALPHABET_SIZE)]
+
+    for c in string:
+        print(f"c: {ord(c)}")
+        frequencies[ord(c)-ord('a')] += 1
+
+    return list(map(lambda x: x / len(string), frequencies))
+
+# Compute the result from the equation 1.1 from the book hehe
+# TODO: rename this function to something inteligible
+def compute_cool_number(frequencies: list) -> float:
+    sum = 0
+    for el in frequencies:
+        sum += el**2
+
+    return sum
+
+# Implements (badly) the index of coincidence method to figure out the
+# length of the key used to encode the text
+def index_of_coincidence(freq_table_file: str, text: str):
+    freq = get_frequencies(freq_table_file)
+    expected_cool_number = compute_cool_number(freq)
+    cool_numbers = []
+    text = ''.join([i for i in text if i.isalpha()])
+
+    for key_len_guess in range(1, int(len(text)/ALPHABET_SIZE)):
+        sequence = ""
+        for i in range(0, len(text), key_len_guess):
+            sequence += text[i]
+        cool_numbers.append((key_len_guess, compute_cool_number(compute_frequencies(sequence))))
+
+    cool_numbers.sort(key=(lambda el: abs(expected_cool_number - el[1])))
+    print(cool_numbers)
+
+def main():
+    # Parse command line arguments
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "f:m:", ["freq-file=", "method="])
+    except getopt.GetoptError as err:
+        print(err, file=sys.stderr) 
+        sys.exit(1)
+    freq_file = ""
+    method = ""
+    for o, a in opts:
+        if o in ('-f', '--freq-file'):
+            freq_file = a
+        elif o in ('-m', '--method'):
+            method = a
+        else:
+            print("ERROR: Unhadled option.", file=sys.stderr)
+            sys.exit(1)
+
+    text = sys.stdin.read()
+    print(freq_file)
+    print(method)
+
+    match method:
+        case "ioc":
+            index_of_coincidence(freq_file, text)
+        case _:
+            print(f"ERROR: No method '{method}'.", file=sys.stderr)
+            sys.exit(1)
+
+if __name__ == "__main__":
+    main()
