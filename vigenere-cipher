@@ -19,6 +19,7 @@ CHAR_IDX = {x: y for y, x in enumerate(ALPHABET)}
 def vigenere_cipher(text: str, secret: str, should_encode: bool) -> str:
     res = ""
     i = 0
+    secret = secret.lower()
 
     for text_char in text.lower():
         if text_char not in ALPHABET:
