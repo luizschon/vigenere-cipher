@@ -74,11 +74,11 @@ def get_key(ciphertext: str, freq_file: str) -> str:
 
     frequencies = []
     for i in range(key_len):   
-        frequencies.append([0]*26)    
-        for j in range(len(slices[i])):        
-            frequencies[i][ALPHABET.find(slices[i][j])] += 1   
-        for j in range(26):        
-            frequencies[i][j] = frequencies[i][j] / len(slices[i])
+        frequencies.append([0] * 26)
+        for c in slices[i]:        
+            frequencies[i][CHAR_IDX[c]] += 1   
+        for n in frequencies[i]:        
+            n /= len(slices[i])
 
     key = ""
     for freq in frequencies:
