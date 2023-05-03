@@ -10,29 +10,54 @@ Universidade de Brasilia
 """
 
 import sys, getopt 
+from typing import List
 from string import ascii_lowercase
+from math import sqrt
 
-ALPHABET = 'abcdefghijklmnopqrstuvwxyz'
+ALPHABET = ascii_lowercase
+CHAR_IDX = {x: y for y, x in enumerate(ALPHABET)}
 
-def index_of_coincidence(sequence: str):
+def index_of_coincidence(sequence: str="", frequencies: list=[]):
+    sum = 0
+    if frequencies:
+        for f in frequencies:
+            sum += f*f
+
+        return sum
+
     counts = [0] * len(ALPHABET)
     for char in sequence.lower():
-        counts[ALPHABET.find(char)] += 1
+        counts[CHAR_IDX[char]] += 1
 
-    sum = 0
-    total = 0
     seq_len = len(sequence)
-    for i in range(len(ALPHABET)):
-        sum += counts[i] * (counts[i]-1)
+    for n in counts:
+        sum += n * (n-1)
 
     return sum/(seq_len * (seq_len-1))
 
 
-def find_key_len(ciphertext: str):
+def cosangle(vec1: float, vec2: float) -> float:
+    numerator = 0   
+    lengthx2 = 0    
+    lengthy2 = 0    
+    for i in range(len(vec1)):        
+        numerator += vec1[i]*vec2[i]        
+        lengthx2 += vec1[i]*vec1[i]        
+        lengthy2 += vec2[i]*vec2[i]    
+
+    return numerator / sqrt(lengthx2*lengthy2)
+
+
+def get_key(ciphertext: str, freq_file: str) -> str:
+    lines = open(freq_file).readlines()
+    freq_histogram = [float(v) for v in lines] 
+    expected_ioc = index_of_coincidence(frequencies=freq_histogram)
+
     found = False
     key_len = 0
-    all_iocs = []
-    ciphertext = ''.join([c for c in ciphertext if c in ascii_lowercase])
+    THRESHOLD = 0.007
+    ciphertext = ''.join([c for c in ciphertext if c in CHAR_IDX])
+
     while not found:
         key_len += 1
         slices = [''] * key_len
@@ -41,15 +66,28 @@ def find_key_len(ciphertext: str):
 
         avg_ioc = 0
         for slice in slices:
-            print(slice)
-            avg_ioc += index_of_coincidence(slice)
+            avg_ioc += index_of_coincidence(sequence=slice)
         avg_ioc = avg_ioc / key_len
-        all_iocs.append((key_len, avg_ioc))
 
-        if key_len == 20:
+        if avg_ioc >= expected_ioc - THRESHOLD:
             found = True
 
-    print(all_iocs)
+    frequencies = []
+    for i in range(key_len):   
+        frequencies.append([0]*26)    
+        for j in range(len(slices[i])):        
+            frequencies[i][ALPHABET.find(slices[i][j])] += 1   
+        for j in range(26):        
+            frequencies[i][j] = frequencies[i][j] / len(slices[i])
+
+    key = ""
+    for freq in frequencies:
+        for i in range(len(ALPHABET)):
+            histogram = freq[i:] + freq[:i]
+            if cosangle(freq_histogram, histogram) > 0.90:
+                key += ALPHABET[i]
+
+    return key
 
 
 def main():
@@ -72,16 +110,7 @@ def main():
             sys.exit(1)
 
     text = sys.stdin.read()
-    print(freq_file)
-    print(method)
-
-    match method:
-        case "ioc":
-            # index_of_coincidence(freq_file, text)
-            find_key_len(text)
-        case _:
-            print(f"ERROR: No method '{method}'.", file=sys.stderr)
-            sys.exit(1)
+    print(get_key(text, freq_file))
 
 
 if __name__ == "__main__":
