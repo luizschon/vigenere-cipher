@@ -108,8 +108,6 @@ def main():
         else:
             print("ERROR: Unhadled option.", file=sys.stderr)
             sys.exit(1)
-    
-    print(vigenere_cipher.__name__)
 
     text = sys.stdin.read()
     key = get_key(text, freq_file)
