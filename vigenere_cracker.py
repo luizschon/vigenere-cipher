@@ -11,12 +11,10 @@ Universidade de Brasilia
 
 import sys, getopt 
 from typing import List
-from string import ascii_lowercase
 from math import sqrt
 from vigenere_cipher import vigenere_cipher 
+from utils import ALPHABET, CHAR_IDX
 
-ALPHABET = ascii_lowercase
-CHAR_IDX = {x: y for y, x in enumerate(ALPHABET)}
 
 def index_of_coincidence(sequence: str="", frequencies: list=[]):
     sum = 0
@@ -37,7 +35,7 @@ def index_of_coincidence(sequence: str="", frequencies: list=[]):
     return sum/(seq_len * (seq_len-1))
 
 
-def cosangle(vec1: List[float | int], vec2: List[float | int]) -> float:
+def cosangle(vec1: List[float], vec2: List[float]) -> float:
     numerator = 0   
     lengthx2 = 0    
     lengthy2 = 0    
@@ -50,7 +48,14 @@ def cosangle(vec1: List[float | int], vec2: List[float | int]) -> float:
 
 
 def get_key(ciphertext: str, freq_file: str) -> str:
-    lines = open(freq_file).readlines()
+    lines = []
+    with open(freq_file, 'r') as file:
+        lines = file.readlines()
+
+    if not lines:
+        print('file empty')
+        sys.exit(1)
+
     freq_histogram = [float(v) for v in lines] 
     expected_ioc = index_of_coincidence(frequencies=freq_histogram)
 
@@ -110,10 +115,12 @@ def main():
             sys.exit(1)
 
     text = sys.stdin.read()
-    key = get_key(text, freq_file)
     
+    key = get_key(text, freq_file)
+    print(f"key:", key)
+
     res = vigenere_cipher(text, key, False)
-    sys.stdout.write(res)
+    print(res)
 
 if __name__ == "__main__":
     main()

@@ -10,11 +10,9 @@ Universidade de Brasilia
 """
 
 import sys, getopt 
-from string import ascii_lowercase
+from utils import ALPHABET, CHAR_IDX
 
-ALPHABET = ascii_lowercase
 MATRIX = [[ALPHABET[(i+j) % 26] for j in range(len(ALPHABET)) ] for i in range(len(ALPHABET))]
-CHAR_IDX = {x: y for y, x in enumerate(ALPHABET)}
 
 def vigenere_cipher(text: str, secret: str, should_encode: bool) -> str:
     res = ""
@@ -44,7 +42,7 @@ def vigenere_cipher(text: str, secret: str, should_encode: bool) -> str:
 def main():
     # Parse command line arguments
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "k:ed", ["key=", "encode", "decode"])
+        opts, _ = getopt.getopt(sys.argv[1:], "k:ed", ["key=", "encode", "decode"])
     except getopt.GetoptError as err:
         print(err, file=sys.stderr) 
         sys.exit(1)
