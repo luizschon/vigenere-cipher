@@ -13,6 +13,7 @@ import sys, getopt
 from typing import List
 from string import ascii_lowercase
 from math import sqrt
+from vigenere_cipher import vigenere_cipher 
 
 ALPHABET = ascii_lowercase
 CHAR_IDX = {x: y for y, x in enumerate(ALPHABET)}
@@ -99,19 +100,20 @@ def main():
         sys.exit(1)
         
     freq_file = ""
-    method = ""
     for o, a in opts:
         if o in ('-f', '--freq-file'):
             freq_file = a
-        elif o in ('-m', '--method'):
-            method = a
         else:
             print("ERROR: Unhadled option.", file=sys.stderr)
             sys.exit(1)
+    
+    print(vigenere_cipher.__name__)
 
     text = sys.stdin.read()
-    print(get_key(text, freq_file))
-
+    key = get_key(text, freq_file)
+    
+    res = vigenere_cipher(text, key, False)
+    sys.stdout.write(res)
 
 if __name__ == "__main__":
     main()
