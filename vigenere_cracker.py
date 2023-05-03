@@ -37,7 +37,7 @@ def index_of_coincidence(sequence: str="", frequencies: list=[]):
     return sum/(seq_len * (seq_len-1))
 
 
-def cosangle(vec1: float, vec2: float) -> float:
+def cosangle(vec1: List[float | int], vec2: List[float | int]) -> float:
     numerator = 0   
     lengthx2 = 0    
     lengthy2 = 0    
@@ -58,6 +58,8 @@ def get_key(ciphertext: str, freq_file: str) -> str:
     key_len = 0
     THRESHOLD = 0.007
     ciphertext = ''.join([c for c in ciphertext if c in CHAR_IDX])
+
+    slices = []
 
     while not found:
         key_len += 1
@@ -94,7 +96,7 @@ def get_key(ciphertext: str, freq_file: str) -> str:
 def main():
     # Parse command line arguments
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "f:m:", ["freq-file=", "method="])
+        opts, _ = getopt.getopt(sys.argv[1:], "f:m:", ["freq-file=", "method="])
     except getopt.GetoptError as err:
         print(err, file=sys.stderr) 
         sys.exit(1)
