@@ -1,19 +1,23 @@
-# cifra de vigenère
+# Cifra de Vigenère
 
+## Autores
 
-# exemplo codificação
+- Bruno Fernandes Teixeira - 190097540
+- Luiz Carlos Schonarth Junior - 190055171
+
+# Exemplo codificação
 
 ```bash
 cat input.txt | python vigenere_cipher.py -k bane -e
 ```
 
-# exemplo decodificação
+# Exemplo decodificação
 
 ```bash
 cat input.txt | python vigenere_cipher.py -k bane -d
 ```
 
-# exemplo quebra
+# Exemplo quebra
 
 ```bash
 cat challenges/desafio2.txt | python vigenere_cracker.py -f frequencies/portuguese.txt
