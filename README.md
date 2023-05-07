@@ -10,7 +10,7 @@
 Insira o texto a ser cifrado em `input.txt` e use o seguinte comando:
 
 ```bash
-cat input.txt | python vigenere_cipher.py --key bane --encrypt
+cat input.txt | python vigenere_cipher.py --key bane --encode
 ```
 
 # Exemplo decodificação
@@ -18,7 +18,7 @@ cat input.txt | python vigenere_cipher.py --key bane --encrypt
 Insira o texto a ser decifrado em `input.txt` e use o seguinte comando:
 
 ```bash
-cat input.txt | python vigenere_cipher.py --key bane --decrypt
+cat input.txt | python vigenere_cipher.py --key bane --decode
 ```
 
 # Quebrando desafios
