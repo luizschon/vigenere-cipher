@@ -24,7 +24,7 @@ def index_of_coincidence(sequence: str="", frequencies: list=[]):
 
         return sum
 
-    counts = [0] * len(ALPHABET)
+    counts = [0 for _ in range(len(ALPHABET))]
     for char in sequence.lower():
         counts[CHAR_IDX[char]] += 1
 
@@ -40,9 +40,9 @@ def cosangle(vec1: List[float], vec2: List[float]) -> float:
     lengthx2 = 0    
     lengthy2 = 0    
     for i in range(len(vec1)):        
-        numerator += vec1[i]*vec2[i]        
-        lengthx2 += vec1[i]*vec1[i]        
-        lengthy2 += vec2[i]*vec2[i]    
+        numerator += vec1[i]*vec2[i]
+        lengthx2 += vec1[i]*vec1[i]
+        lengthy2 += vec2[i]*vec2[i]
 
     return numerator / sqrt(lengthx2*lengthy2)
 
@@ -68,7 +68,7 @@ def get_key(ciphertext: str, freq_file: str) -> str:
 
     while not found:
         key_len += 1
-        slices = [''] * key_len
+        slices = ['' for _ in range(key_len)]
         for i in range(len(ciphertext)):
             slices[i % key_len] += ciphertext[i]
 
